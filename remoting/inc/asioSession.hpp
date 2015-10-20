@@ -26,6 +26,7 @@
 
 #include "protocol.h"
 #include "KitePacket.hpp"  
+#include "ByteBuf.hpp"  
 
 using namespace boost; 
 
@@ -34,7 +35,9 @@ class asioSession
 {
 public:
 	asioSession (SOCK_TYPE & socket): socket_(socket), read_buffer_()
-	{}
+	{
+		lastdata = false;
+	}
 	virtual ~asioSession() 
 	{}
 	
@@ -53,7 +56,7 @@ public:
 			                               = &asioSession<SOCK_TYPE>::async_write_complete <Handler> ;
 		int total_output_size = 0; 
 		char *ptr = pkg.toByteBuf(total_output_size);
-		printf("write size %d\n", total_output_size);
+		//printf("write size %d\n", total_output_size);
 		if(total_output_size > 0)
 		{
 			asio::async_write(socket_, asio::buffer(ptr, total_output_size), 
@@ -123,6 +126,7 @@ private:
 	void async_read_pkg(const system::error_code& e,std::size_t bytes_read, 
 			                     KitePacket &pkg, tuple<Handler> handle) 
 	{
+		printf("async_read_pkg 1\n");
 		/*  出错 */  
 		if (e) {
 			boost::get<0>(handle)(e, bytes_read);
@@ -131,22 +135,52 @@ private:
 
 		const char * data = asio::buffer_cast<const char *> (read_buffer_.data());
 		int    pkglen = KitePacket::delimPacket(data, read_buffer_.size());
+		printf("async_read_pkg len %d 2\n", pkglen);
 		if(pkglen <= KitePacket::getHeaderLen())
 		{
+			lastdata = true;
+	        buff.writeBytes(data, pkglen);
+			read_buffer_.consume(pkglen);  
 			async_setup_read_varint(pkg, handle);
 			return ;
 		}
-		read_buffer_.consume(pkglen);  
-		if(KitePacket::parseFrom(pkg, data, pkglen))
+		if(lastdata == true)
+		{
+	        buff.writeBytes(data, pkglen);
+			data = buff.getBuffPtr();	
+			pkglen = buff.size();
+		}
+		bool b = KitePacket::parseFrom(pkg, data, pkglen);
+		printf("async_read_pkg parseFrom  %d 3\n", b);
+		if(b)
 		{
 			boost::get<0>(handle)(e, pkglen);  
+			read_buffer_.consume(pkglen);  
+			if(lastdata == true)
+			{
+				buff.clear();
+				lastdata = false;
+			}
 		}
+		else
+		{
+			read_buffer_.consume(pkglen);  
+			if(lastdata == true)
+			{
+				buff.clear();
+				lastdata = false;
+			}
+			async_setup_read_varint(pkg, handle);
+		}
+		printf("async_read_pkg  4\n");
 		return; 
 	}
 
 private:
 	SOCK_TYPE 				& 	socket_;
 	asio::streambuf 			read_buffer_;
+	ByteBuf                     buff;
+	bool                        lastdata;
 };
 
 

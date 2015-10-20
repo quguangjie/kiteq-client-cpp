@@ -75,7 +75,7 @@ public:
 		buff.push_back(c4);
 		writerIndex += 4;
 	}
-	void writeBytes(char b[], int num)  
+	void writeBytes(const char *b, int num)  
 	{
 		if(num <= 0)
 			return; 
@@ -97,6 +97,10 @@ public:
 	long  size()
 	{
 		return buff.size();	 
+	}
+	void  clear()
+	{
+		buff.clear();	 
 	}
 	char * getWritePtr(int len)
 	{

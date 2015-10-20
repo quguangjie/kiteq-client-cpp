@@ -358,7 +358,9 @@ void     asioKiteIOClient::handle_read_pkg(const boost::system::error_code& err,
 			} else {
 			}
 		}
+	//printf("[%s.%d] \n", __FUNCTION__,__LINE__);
 		session_.async_read(readPkg, boost::bind(&asioKiteIOClient::handle_read_pkg, this, boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));
+	printf("[%s.%d] \n", __FUNCTION__,__LINE__);
 
 	}
 }
