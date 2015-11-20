@@ -126,7 +126,7 @@ private:
 	void async_read_pkg(const system::error_code& e,std::size_t bytes_read, 
 			                     KitePacket &pkg, tuple<Handler> handle) 
 	{
-		printf("async_read_pkg 1\n");
+		//printf("async_read_pkg 1\n");
 		/*  出错 */  
 		if (e) {
 			boost::get<0>(handle)(e, bytes_read);
@@ -135,7 +135,7 @@ private:
 
 		const char * data = asio::buffer_cast<const char *> (read_buffer_.data());
 		int    pkglen = KitePacket::delimPacket(data, read_buffer_.size());
-		printf("async_read_pkg len %d 2\n", pkglen);
+		//printf("async_read_pkg len %d 2\n", pkglen);
 		if(pkglen <= KitePacket::getHeaderLen())
 		{
 			lastdata = true;
@@ -151,7 +151,7 @@ private:
 			pkglen = buff.size();
 		}
 		bool b = KitePacket::parseFrom(pkg, data, pkglen);
-		printf("async_read_pkg parseFrom  %d 3\n", b);
+		//printf("async_read_pkg parseFrom  %d 3\n", b);
 		if(b)
 		{
 			boost::get<0>(handle)(e, pkglen);  
@@ -172,7 +172,7 @@ private:
 			}
 			async_setup_read_varint(pkg, handle);
 		}
-		printf("async_read_pkg  4\n");
+		//printf("async_read_pkg  4\n");
 		return; 
 	}
 
