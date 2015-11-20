@@ -83,7 +83,7 @@ list<string> BindingManager::getServerList(const string &topic)
 			list<string> reqSerlist = zkc->getChildren(path);
 			zkc->subscribeChildChanges(path, childListener);
 			topicServerMap.insert(make_pair(topic, reqSerlist));
-			printf("BindingManager::getServerList serlist size %ld\n",reqSerlist.size());
+			//printf("BindingManager::getServerList serlist size %ld\n",reqSerlist.size());
 			return reqSerlist; 
 		}catch (ZkExceptionNoNode &e){
 			cout << e.what() << endl;
@@ -107,7 +107,8 @@ void BindingManager::refreshTopicServers(const string &topic, const list<string>
 
 void BindingManager::registerClientManager(const string &topic, shared_ptr<ClientManager> clientManager)
 {
-	clientManagerMap.putIfAbsent(topic, clientManager);
+	shared_ptr<ClientManager> _clientManager;
+	clientManagerMap.putIfAbsent(topic, clientManager, _clientManager);
 }
 void BindingManager::registerProducer(const string &topic, const string &groupId, const string &producerName)
 {
@@ -119,7 +120,7 @@ void BindingManager::registerProducer(const string &topic, const string &groupId
 	ss << pt;  
 	string path = groupPath  + "/" + producerName + "@";
 	path.append(ss.str());
-	printf("BindingManager::registerProducer: path %s\n", path.c_str());
+	//printf("BindingManager::registerProducer: path %s\n", path.c_str());
 	while(true)
 	{
 		try{

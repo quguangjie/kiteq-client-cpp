@@ -130,7 +130,7 @@ void     ClientManager::kiteIOClientCheckThread()
 	{
 		sleep(3);
 		setlock->lock();
-		for(it = clients.begin(); it != clients.end(); ++it)
+		for(it = clients.begin(); it != clients.end(); )
 		{
 			if ((*it)->isDead())
 			{
@@ -138,13 +138,19 @@ void     ClientManager::kiteIOClientCheckThread()
 				shared_ptr<KiteIOClient> ioClient;
 				if(connMap.remove(serverUri, ioClient) == true)
 				{
-					if (waitingClients.putIfAbsent(serverUri, ioClient) == NULL)
+					shared_ptr<KiteIOClient> _kiteIOClient;
+					if ((waitingClients.putIfAbsent(serverUri, ioClient, _kiteIOClient)) == false) 
 					{
 						thread th(boost::bind(&ClientManager::kiteIOClientReconnectThread, this, ioClient, serverUri));
 						th.detach();
 					}
 				}
+				unordered_set<shared_ptr<KiteIOClient> >::iterator tmpit = it;
+				++it;
+				clients.erase(tmpit);
+				continue;
 			}
+			++it;
 		}
 		setlock->unlock();
 	}
@@ -186,8 +192,12 @@ shared_ptr<KiteIOClient> ClientManager::get(const string& topic) throw (NoKiteqS
 
 shared_ptr<KiteIOClient> ClientManager::putIfAbsent(const string& serverUrl, shared_ptr<KiteIOClient> client) 
 {
-	shared_ptr<KiteIOClient> _client = connMap.putIfAbsent(serverUrl, client);
-	if (_client == NULL) {
+	/*
+	 * return true: already absent
+	 * return false: no absent
+	 */
+	shared_ptr<KiteIOClient> _client;
+	if ((connMap.putIfAbsent(serverUrl, client, _client)) == false) {
 		setlock->lock();
 		clients.insert(client);
 		setlock->unlock();
@@ -201,6 +211,7 @@ shared_ptr<KiteIOClient> ClientManager::remove(const string& serverUri)
 	if(connMap.remove(serverUri, client) == true)
 	if (client != NULL) {
 		setlock->lock();
+	//	printf("ClientManager::remove client size %ld\n", clients.size());
 		clients.erase(client);
 		setlock->unlock();
 	}
@@ -222,6 +233,7 @@ void ClientManager::refreshServers(const string& topic, list<string> newServerUr
 	list<string>::iterator it;
 
 	for (it = newServerUris.begin(); it != newServerUris.end(); ++it) {
+		printf("ClientManager::refreshServers %s \n", it->c_str());
 		if (!connMap.containsKey(*it)) {
 			createKiteQClient(topic, (*it));
 		}
@@ -234,13 +246,10 @@ void ClientManager::createKiteQClient(const string& topic, const string& serverU
 	if(connMap.get(serverUri, kiteIOClient) == false)
 	{
 		try {
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 			kiteIOClient = createKiteIOClient(serverUri);
 		} catch (std::runtime_error &e) {
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 			throw e;
 		}
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 
 		if (kiteIOClient->handshake()) {
 			shared_ptr<KiteIOClient> _kiteIOClient;
@@ -271,12 +280,8 @@ shared_ptr<KiteIOClient> ClientManager::createKiteIOClient(const string& serverU
 	cout << clientConfigs->secretKey << endl;
 
 	shared_ptr<KiteIOClient> kiteIOClient(new asioKiteIOClient(clientConfigs->groupId, clientConfigs->secretKey, serverUri));
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 	kiteIOClient->start();
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 	shared_ptr<remotingListener> l(new kiteRemotingListener(shared_from_this(), kiteIOClient, listener));
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 	kiteIOClient->registerListener(l);
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 	return kiteIOClient;
 }

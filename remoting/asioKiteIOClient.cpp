@@ -66,9 +66,7 @@ private:
 					boost::posix_time::microsec_clock::universal_time() - epoch;
 				long now = time_from_epoch.total_microseconds()/1000;
 				long _nextHeartBeatTime = nextHeartbeatTime.getCount();
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 				if (now > _nextHeartBeatTime) {
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 					shared_ptr<HeartBeat> heartBeat(new HeartBeat());
 					heartBeat->set_version(now);
 					shared_ptr<HeartBeat> response = parent->sendHeartBeatAndGet(Protocol::CMD_HEARTBEAT, heartBeat);
@@ -79,9 +77,8 @@ private:
 					}
 				}
 				else {
-					printf("%ld\n", (_nextHeartBeatTime - now)*1000);
+					//printf("%ld\n", (_nextHeartBeatTime - now)*1000);
 					usleep((_nextHeartBeatTime - now)*1000);
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 				}
 			}
 			sleep(1);
@@ -127,7 +124,7 @@ bool asioKiteIOClient::start()
 	while(true)
 	{
 		reconnect0(++nretry);
-		printf("asioKiteIOClient::reconnect status %ld\n", status.getCount());
+		//printf("asioKiteIOClient::reconnect status %ld\n", status.getCount());
 		if (status.getCount() == RECOVERING) {
 			break;
 		}
@@ -147,11 +144,11 @@ bool asioKiteIOClient::reconnect()
 	while(true)
 	{
 		reconnect0(++nretry);
-		printf("asioKiteIOClient::reconnect status %ld\n", status.getCount());
+		//printf("asioKiteIOClient::reconnect status %ld\n", status.getCount());
 		if (status.getCount() == RECOVERING) {
 			heartbeat->reset();
 			if (handshake()) {
-				printf("asioKiteIOClient::reconnect  set running");
+				//printf("asioKiteIOClient::reconnect  set running");
 				status.setCount(RUNNING);
 				return true; 
 			}
@@ -212,7 +209,7 @@ shared_ptr<HeartBeat>       asioKiteIOClient::sendHeartBeatAndGet(int cmdType, s
 }
 shared_ptr<ConnAuthAck>     asioKiteIOClient::sendConnAndGet(int cmdType, shared_ptr<protobuf::MessageLite> message)
 {
-	printf("[%s.%d]\n", __FUNCTION__,__LINE__);
+	//printf("[%s.%d]\n", __FUNCTION__,__LINE__);
 	KitePacket reqPacket(cmdType, message);
 	shared_ptr<ResponseFuture> future(new ResponseFuture(reqPacket.getOpaque()));
 	future->ResponseFutureUsed();
@@ -240,7 +237,7 @@ shared_ptr<MessageStoreAck> asioKiteIOClient::sendMessageAndGet(int cmdType, sha
 	KitePacket reqPacket(cmdType, message);
 	shared_ptr<ResponseFuture> future(new ResponseFuture(reqPacket.getOpaque()));
 	future->ResponseFutureUsed();
-	printf("asioKiteIOClient::sendMessageAndGet %d\n");
+	//printf("asioKiteIOClient::sendMessageAndGet %d\n");
 
 	session_.async_write(reqPacket, boost::bind(&asioKiteIOClient::handle_write_request, this,boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));   
 
@@ -284,13 +281,13 @@ bool asioKiteIOClient::handshake()
 	connMeta->set_groupid(groupId);
 	connMeta->set_secretkey(secretKey);
 
-	printf("asioKiteIOClient::handshake [%s.%d]\n", __FUNCTION__,__LINE__);
+	//printf("asioKiteIOClient::handshake [%s.%d]\n", __FUNCTION__,__LINE__);
 	shared_ptr<ConnAuthAck> ack = sendConnAndGet(Protocol::CMD_CONN_META, connMeta);
 	if(ack == NULL)
 		return false;
-	printf("asioKiteIOClient::handshake [%s.%d]\n", __FUNCTION__,__LINE__);
+	//printf("asioKiteIOClient::handshake [%s.%d]\n", __FUNCTION__,__LINE__);
 	bool success = ack->status();
-	printf("asioKiteIOClient::handshake [%s.%d] success %d\n", __FUNCTION__,__LINE__, success);
+	//printf("asioKiteIOClient::handshake [%s.%d] success %d\n", __FUNCTION__,__LINE__, success);
 	if (success) 
 		status.setCount(RUNNING);
 	return success;
@@ -298,7 +295,7 @@ bool asioKiteIOClient::handshake()
 
 void     asioKiteIOClient::handle_resolve(const boost::system::error_code& err, tcp::resolver::iterator endpoint_iterator)
 {
-	printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, (err));
+	//printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, (err));
 	if(!err)
 	{
 #if BOOST_VERSION < 104801
@@ -317,7 +314,7 @@ void     asioKiteIOClient::handle_connect(const boost::system::error_code& err, 
 void     asioKiteIOClient::handle_connect(const boost::system::error_code& err)
 #endif
 {
-	printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, (err));
+	//printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, (err));
 	if (!err) {
 		status.setCount(RECOVERING);
 		session_.async_read(readPkg, boost::bind(&asioKiteIOClient::handle_read_pkg, this, boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));
@@ -325,19 +322,19 @@ void     asioKiteIOClient::handle_connect(const boost::system::error_code& err)
 }
 void     asioKiteIOClient::handle_write_request(const boost::system::error_code& err, size_t written)
 {
-	printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, (err));
+	//printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, (err));
 	if (!err) {
 		KiteStats::recordWrite();
 	}
 }
 void     asioKiteIOClient::handle_read_pkg(const boost::system::error_code& err,std::size_t size)
 {
-	printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, err);
+	//printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, err);
 	if (!err) {
 		KiteStats::recordRead();
 
 		char cmdType = readPkg.getCmdType();
-	printf("[%s.%d] cmdType %d\n", __FUNCTION__,__LINE__, cmdType);
+	//printf("[%s.%d] cmdType %d\n", __FUNCTION__,__LINE__, cmdType);
 		if (cmdType == Protocol::CMD_CONN_AUTH ||
 				cmdType == Protocol::CMD_MESSAGE_STORE_ACK ||
 				cmdType == Protocol::CMD_HEARTBEAT) 
@@ -360,7 +357,7 @@ void     asioKiteIOClient::handle_read_pkg(const boost::system::error_code& err,
 		}
 	//printf("[%s.%d] \n", __FUNCTION__,__LINE__);
 		session_.async_read(readPkg, boost::bind(&asioKiteIOClient::handle_read_pkg, this, boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));
-	printf("[%s.%d] \n", __FUNCTION__,__LINE__);
+	//printf("[%s.%d] \n", __FUNCTION__,__LINE__);
 
 	}
 }

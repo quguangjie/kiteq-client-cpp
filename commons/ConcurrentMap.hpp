@@ -19,6 +19,7 @@
 #ifndef   __CONCURRENTMAP_HPP
 #define   __CONCURRENTMAP_HPP
 
+#include <iostream>
 #include <boost/thread/mutex.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -37,16 +38,17 @@ public:
 		boost::mutex::scoped_lock lock(maplock); 
 		values.clear();
 	}
-	const Mapped & putIfAbsent(const Key&k, const Mapped&v)
+	bool putIfAbsent(const Key&k, const Mapped&v, Mapped &oldval)
 	{
 		boost::mutex::scoped_lock lock(maplock); 
 		typename boost::unordered_map<Key, Mapped>::iterator it = values.find(k);
 		if(it != values.end())
 		{
-			return it->second;
+			oldval = it->second;
+			return true;
 		}
 		values.insert(make_pair(k, v));
-		return v;
+		return false;
 	}
 	bool remove(const Key&k, Mapped & v)
 	{
@@ -56,8 +58,8 @@ public:
 		{
 			return false;
 		}
-		values.erase(it);
 	 	v = it->second;
+		values.erase(it);
 		return true;
 	}
 	bool remove(const Key&k)
