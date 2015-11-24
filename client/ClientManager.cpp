@@ -187,7 +187,7 @@ shared_ptr<KiteIOClient> ClientManager::get(const string& topic) throw (NoKiteqS
 		shared_ptr<KiteIOClient> client;
 		if(connMap.get(serverUri, client) == true)
 			return client;
-		return shared_ptr<KiteIOClient>();
+        throw new NoKiteqServerException(topic);
 }
 
 shared_ptr<KiteIOClient> ClientManager::putIfAbsent(const string& serverUrl, shared_ptr<KiteIOClient> client) 
@@ -208,8 +208,7 @@ shared_ptr<KiteIOClient> ClientManager::putIfAbsent(const string& serverUrl, sha
 shared_ptr<KiteIOClient> ClientManager::remove(const string& serverUri) 
 {
 	shared_ptr<KiteIOClient> client;
-	if(connMap.remove(serverUri, client) == true)
-	if (client != NULL) {
+	if(connMap.remove(serverUri, client) == true) {
 		setlock->lock();
 	//	printf("ClientManager::remove client size %ld\n", clients.size());
 		clients.erase(client);

@@ -339,6 +339,7 @@ void     asioKiteIOClient::handle_read_pkg(const boost::system::error_code& err,
 				cmdType == Protocol::CMD_MESSAGE_STORE_ACK ||
 				cmdType == Protocol::CMD_HEARTBEAT) 
 		{
+			heartbeat->reset();
 			ResponseFuture::receiveResponse(shared_ptr<KiteResponse> (new KiteResponse(readPkg.getOpaque(), readPkg.getMessage())));
 		} 
 		else 

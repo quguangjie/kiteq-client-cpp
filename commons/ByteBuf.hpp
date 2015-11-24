@@ -38,11 +38,11 @@ public:
 	}
 	static int readInt(const char *b)
 	{
-		char c1 = b[0];
-		char c2 = b[1];
-		char c3 = b[2];
-		char c4 = b[3];
-		return (c1<<24) | (c2 << 16) | (c3 << 8) |(c4); 
+		unsigned int c1 = b[0];
+		unsigned int c2 = b[1];
+		unsigned int c3 = b[2];
+		unsigned int c4 = b[3];
+		return (int)(((c1&0xFF)<<24) | ((c2&0xFF) << 16) | ((c3&0xFF) << 8) |(c4&0xFF)); 
 	}
 
 	char readByte()
@@ -56,7 +56,7 @@ public:
 		char c2 = buff[readerIndex++];
 		char c3 = buff[readerIndex++];
 		char c4 = buff[readerIndex++];
-		return (c1<<24) | (c2 << 16) | (c3 << 8) |(c4); 
+		return (int)(((c1&0xFF)<<24) | ((c2&0xFF) << 16) | ((c3&0xFF) << 8) |(c4&0xFF)); 
 	}
 	void writeByte(char c)
 	{
