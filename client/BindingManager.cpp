@@ -24,6 +24,7 @@
 #include "ZkClient.h"
 #include "ClientManager.h"
 #include "Binding.hpp"
+#include "ThreadPoolManager.hpp"
 
 class watchReqNodeChild :public IZkChildListener
 {
@@ -37,10 +38,15 @@ public:
 	~watchReqNodeChild(){}
 	void handleChildChange(const string &parentPath, list<string> &currentChildren)
 	{
-		_bindingManager->refreshTopicServers(_topic, currentChildren);
+		ThreadPoolManager::get_mutable_instance().getDispatcherExecutor()->schedule(boost::bind(&watchReqNodeChild::refreshTopicServers, this, _topic, currentChildren));
 	}
 	void handleParentChange(const string &parentPath){}
 private:
+	void refreshTopicServers(const string &topic, const list<string> &servers)
+	{
+		_bindingManager->refreshTopicServers(topic, servers);
+	}
+
 	string                     _topic;
 	shared_ptr<ZkClient>       _zkcli;
 	shared_ptr<BindingManager> _bindingManager;
