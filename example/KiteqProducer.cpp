@@ -59,7 +59,7 @@ static shared_ptr<StringMessage> buildMessage(const string &topic, const string 
 int main(int argc, char *argv[])
 {
 	string zkAddr = "172.16.1.96:2181";
-	string groupId = "s-mts-test";
+	string groupId = "pro-mts-test";
 	string secretKey = "123456";
     string topic = "trade";
     string messageType = "pay-succ";
