@@ -12,15 +12,14 @@ A C++ Client for KiteQ
   
 ## Producer 示例
 ···cpp
+
 static shared_ptr<StringMessage> buildMessage(const string &topic, const string &groupId, const string &messageType, const string &body)
 {
     long  now = time(NULL);
     uuids::random_generator  rgen;
     uuids::uuid u = rgen();
     Header * _header = new Header();
-    //cout <<  replace_all_copy(to_string(u), "-", "") << endl; 
     _header->set_messageid(replace_all_copy(to_string(u), "-", ""));
-    //_header->set_messageid("0xc208a6f810");
     _header->set_topic("trade");
     _header->set_messagetype("pay-succ");
     _header->set_expiredtime(1845173857);
@@ -70,6 +69,7 @@ int main(int argc, char *argv[])
 
 ## Consumer 示例
 ···cpp
+
 class testListenerAdapter : public ListenerAdapter
 {
 public:
@@ -106,17 +106,8 @@ int main(int argc, char *argv[])
         
         while(1); slepp(1);
 }
-
 ```
 
 ## 联系方式
    如有问题，请联系 QQ：583125219
-
-
-
-
-
-
-
-
-
+   
