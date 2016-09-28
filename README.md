@@ -11,6 +11,7 @@ A C++ Client for KiteQ
   依赖于 C++ 的 zookeeper client 库， 链接 https://github.com/quguangjie/zkclient-cpp
   
 ## Producer 示例
+
 ···cpp
 
 static shared_ptr<StringMessage> buildMessage(const string &topic, const string &groupId, const string &messageType, const string &body)
@@ -64,10 +65,12 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
+
 ···
 
 
 ## Consumer 示例
+
 ···cpp
 
 class testListenerAdapter : public ListenerAdapter
@@ -106,6 +109,7 @@ int main(int argc, char *argv[])
         
         while(1); slepp(1);
 }
+
 ```
 
 ## 联系方式
