@@ -36,6 +36,12 @@ public:
 	{
 		return *b;
 	}
+	static short readShort(const char *b)
+	{
+		unsigned int c1 = b[0];
+		unsigned int c2 = b[1];
+		return (short)(((c1&0xFF) << 8) |(c2&0xFF)); 
+	}
 	static int readInt(const char *b)
 	{
 		unsigned int c1 = b[0];
@@ -43,6 +49,18 @@ public:
 		unsigned int c3 = b[2];
 		unsigned int c4 = b[3];
 		return (int)(((c1&0xFF)<<24) | ((c2&0xFF) << 16) | ((c3&0xFF) << 8) |(c4&0xFF)); 
+	}
+	static long long readLong(const char *b)
+	{
+		unsigned int c1 = b[0];
+		unsigned int c2 = b[1];
+		unsigned int c3 = b[2];
+		unsigned int c4 = b[3];
+		unsigned int c5 = b[4];
+		unsigned int c6 = b[5];
+		unsigned int c7 = b[6];
+		unsigned int c8 = b[7];
+		return (long long)(((c1&0xFF)<<56) | ((c2&0xFF) << 48) | ((c3&0xFF) << 40) |((c4&0xFF) << 32) |  ((c5&0xFF)<<24) | ((c6&0xFF) << 16) | ((c7&0xFF) << 8) |(c8&0xFF)); 
 	}
 
 	char readByte()
@@ -63,6 +81,14 @@ public:
 		buff.push_back(c);
 		++writerIndex;
 	}
+	void writeShort(short i)
+	{
+		char c1 = (i >> 8) & 0xFF; 
+		char c2 = (i) & 0xFF; 
+		buff.push_back(c1);
+		buff.push_back(c2);
+		writerIndex += 2;
+	}
 	void writeInt(int i)
 	{
 		char c1 = (i >> 24) & 0xFF; 
@@ -74,6 +100,26 @@ public:
 		buff.push_back(c3);
 		buff.push_back(c4);
 		writerIndex += 4;
+	}
+	void writeLong(long i)
+	{
+		char c1 = (i >> 56) & 0xFF; 
+		char c2 = (i >> 48) & 0xFF; 
+		char c3 = (i >> 40) & 0xFF; 
+		char c4 = (i >> 32) & 0xFF; 
+		char c5 = (i >> 24) & 0xFF; 
+		char c6 = (i >> 16) & 0xFF; 
+		char c7 = (i >> 8) & 0xFF; 
+		char c8 = (i) & 0xFF; 
+		buff.push_back(c1);
+		buff.push_back(c2);
+		buff.push_back(c3);
+		buff.push_back(c4);
+		buff.push_back(c5);
+		buff.push_back(c6);
+		buff.push_back(c7);
+		buff.push_back(c8);
+		writerIndex += 8;
 	}
 	void writeBytes(const char *b, int num)  
 	{

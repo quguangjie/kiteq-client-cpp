@@ -25,7 +25,7 @@
 #include <boost/tuple/tuple.hpp>
 
 #include "protocol.h"
-#include "KitePacket.hpp"  
+#include "KitePacket.h"  
 #include "ByteBuf.hpp"  
 
 using namespace boost; 
@@ -36,7 +36,6 @@ class asioSession
 public:
 	asioSession (SOCK_TYPE & socket): socket_(socket), read_buffer_()
 	{
-		lastdata = false;
 	}
 	virtual ~asioSession() 
 	{}
@@ -56,7 +55,6 @@ public:
 			                               = &asioSession<SOCK_TYPE>::async_write_complete <Handler> ;
 		int total_output_size = 0; 
 		char *ptr = pkg.toByteBuf(total_output_size);
-		//printf("write size %d\n", total_output_size);
 		if(total_output_size > 0)
 		{
 			asio::async_write(socket_, asio::buffer(ptr, total_output_size), 
@@ -102,28 +100,48 @@ private:
 	}
 
 	/*
-	 * 读取消息, 直到遇到pkg 分割副号
+	 * 读取消息, 先读取4个字节,获取Pkg包的长度
 	 */
 	template <typename Handler>
 	void async_setup_read_varint(KitePacket &pkg, ::tuple<Handler> handle) 
 	{
 		/*
-		 *   define asioSession<SOCK_TYPE>::async_read_pkg <Handler> function var 'f1'  
+		 *   define asioSession<SOCK_TYPE>::async_read_pkglen <Handler> function var 'f1'  
 		 */
 		void (asioSession<SOCK_TYPE>::*f1)(const system::error_code&, std::size_t offset,
 											KitePacket &pkg, tuple<Handler>) 
-			                                = &asioSession<SOCK_TYPE>::async_read_pkg<Handler>;  
+			                                = &asioSession<SOCK_TYPE>::async_read_pkglen<Handler>;  
 
-		asio::async_read_until(socket_, read_buffer_, KitePacket::getDelim(), 
-				                bind(f1,this, asio::placeholders::error, asio::placeholders::bytes_transferred, ref(pkg),handle));
+		asio::async_read(socket_, asio::buffer(pkglen, 4),
+	               bind(f1,this, asio::placeholders::error, asio::placeholders::bytes_transferred, ref(pkg),handle));
 	}
-
 
 	/*
 	 * 异步读取消息头部完成,进行处理
 	 */
 	template <typename Handler>
-	void async_read_pkg(const system::error_code& e,std::size_t bytes_read, 
+	void async_read_pkglen(const system::error_code& e,std::size_t bytes_read, 
+			                     KitePacket &pkg, tuple<Handler> handle) 
+	{
+		if (e) {
+			boost::get<0>(handle)(e, bytes_read);
+			return ;
+		}
+		void (asioSession<SOCK_TYPE>::*f1)(const system::error_code&, std::size_t offset,
+											KitePacket &pkg, tuple<Handler>) 
+			                                = &asioSession<SOCK_TYPE>::async_read_pkgdata<Handler>;  
+
+		int  len = pkglen[0]<<24 | pkglen[1]<<16 | pkglen[2]<<8 | pkglen[3];
+		asio::async_read(socket_, read_buffer_.prepare(len),  
+	               bind(f1,this, asio::placeholders::error, asio::placeholders::bytes_transferred, ref(pkg),handle));
+		
+	}
+
+	/*
+	 * 异步读取消息数据完成,进行处理
+	 */
+	template <typename Handler>
+	void async_read_pkgdata(const system::error_code& e,std::size_t bytes_read, 
 			                     KitePacket &pkg, tuple<Handler> handle) 
 	{
 		//printf("async_read_pkg 1\n");
@@ -132,47 +150,26 @@ private:
 			boost::get<0>(handle)(e, bytes_read);
 			return ;
 		}
-
-		const char * data = asio::buffer_cast<const char *> (read_buffer_.data());
-		int    pkglen = KitePacket::delimPacket(data, read_buffer_.size());
-		//printf("async_read_pkg len %d 2\n", pkglen);
-		if(pkglen <= KitePacket::getHeaderLen())
+		read_buffer_.commit(bytes_read);
+		int  len = pkglen[0]<<24 | pkglen[1]<<16 | pkglen[2]<<8 | pkglen[3];
+		if(len >= KitePacket::getMaxFrameLength())
 		{
-			lastdata = true;
-	        buff.writeBytes(data, pkglen);
-			read_buffer_.consume(pkglen);  
-			async_setup_read_varint(pkg, handle);
+			boost::get<0>(handle)(e, bytes_read);
 			return ;
 		}
-		if(lastdata == true)
-		{
-	        buff.writeBytes(data, pkglen);
-			data = buff.getBuffPtr();	
-			pkglen = buff.size();
-		}
-		bool b = KitePacket::parseFrom(pkg, data, pkglen);
-		//printf("async_read_pkg parseFrom  %d 3\n", b);
+
+		const char * data = asio::buffer_cast<const char *> (read_buffer_.data());
+		bool b = KitePacket::parseFrom(pkg, data, len);
 		if(b)
 		{
-			boost::get<0>(handle)(e, pkglen);  
-			read_buffer_.consume(pkglen);  
-			if(lastdata == true)
-			{
-				buff.clear();
-				lastdata = false;
-			}
+			boost::get<0>(handle)(e, len);  
+			read_buffer_.consume(len);  
 		}
 		else
 		{
-			read_buffer_.consume(pkglen);  
-			if(lastdata == true)
-			{
-				buff.clear();
-				lastdata = false;
-			}
+			read_buffer_.consume(bytes_read);  
 			async_setup_read_varint(pkg, handle);
 		}
-		//printf("async_read_pkg  4\n");
 		return; 
 	}
 
@@ -180,7 +177,7 @@ private:
 	SOCK_TYPE 				& 	socket_;
 	asio::streambuf 			read_buffer_;
 	ByteBuf                     buff;
-	bool                        lastdata;
+	char                        pkglen[4];
 };
 
 

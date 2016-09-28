@@ -224,12 +224,21 @@ class ConnMeta : public ::google::protobuf::Message {
   ::std::string* release_secretkey();
   void set_allocated_secretkey(::std::string* secretkey);
 
+  // optional int32 warmingupSec = 3 [default = 0];
+  bool has_warmingupsec() const;
+  void clear_warmingupsec();
+  static const int kWarmingupSecFieldNumber = 3;
+  ::google::protobuf::int32 warmingupsec() const;
+  void set_warmingupsec(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:ConnMeta)
  private:
   inline void set_has_groupid();
   inline void clear_has_groupid();
   inline void set_has_secretkey();
   inline void clear_has_secretkey();
+  inline void set_has_warmingupsec();
+  inline void clear_has_warmingupsec();
 
   // helper for ByteSize()
   int RequiredFieldsByteSizeFallback() const;
@@ -239,6 +248,7 @@ class ConnMeta : public ::google::protobuf::Message {
   mutable int _cached_size_;
   ::google::protobuf::internal::ArenaStringPtr groupid_;
   ::google::protobuf::internal::ArenaStringPtr secretkey_;
+  ::google::protobuf::int32 warmingupsec_;
   friend void  protobuf_AddDesc_kite_5fremoting_2eproto();
   friend void protobuf_AssignDesc_kite_5fremoting_2eproto();
   friend void protobuf_ShutdownFile_kite_5fremoting_2eproto();
@@ -596,6 +606,18 @@ class DeliverAck : public ::google::protobuf::Message {
   bool status() const;
   void set_status(bool value);
 
+  // optional string feedback = 6;
+  bool has_feedback() const;
+  void clear_feedback();
+  static const int kFeedbackFieldNumber = 6;
+  const ::std::string& feedback() const;
+  void set_feedback(const ::std::string& value);
+  void set_feedback(const char* value);
+  void set_feedback(const char* value, size_t size);
+  ::std::string* mutable_feedback();
+  ::std::string* release_feedback();
+  void set_allocated_feedback(::std::string* feedback);
+
   // @@protoc_insertion_point(class_scope:DeliverAck)
  private:
   inline void set_has_messageid();
@@ -608,6 +630,8 @@ class DeliverAck : public ::google::protobuf::Message {
   inline void clear_has_groupid();
   inline void set_has_status();
   inline void clear_has_status();
+  inline void set_has_feedback();
+  inline void clear_has_feedback();
 
   // helper for ByteSize()
   int RequiredFieldsByteSizeFallback() const;
@@ -619,6 +643,7 @@ class DeliverAck : public ::google::protobuf::Message {
   ::google::protobuf::internal::ArenaStringPtr topic_;
   ::google::protobuf::internal::ArenaStringPtr messagetype_;
   ::google::protobuf::internal::ArenaStringPtr groupid_;
+  ::google::protobuf::internal::ArenaStringPtr feedback_;
   bool status_;
   friend void  protobuf_AddDesc_kite_5fremoting_2eproto();
   friend void protobuf_AssignDesc_kite_5fremoting_2eproto();
@@ -1012,6 +1037,13 @@ class Header : public ::google::protobuf::Message {
   const ::google::protobuf::RepeatedPtrField< ::Entry >&
       properties() const;
 
+  // optional int64 createTime = 10;
+  bool has_createtime() const;
+  void clear_createtime();
+  static const int kCreateTimeFieldNumber = 10;
+  ::google::protobuf::int64 createtime() const;
+  void set_createtime(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:Header)
  private:
   inline void set_has_messageid();
@@ -1030,6 +1062,8 @@ class Header : public ::google::protobuf::Message {
   inline void clear_has_commit();
   inline void set_has_fly();
   inline void clear_has_fly();
+  inline void set_has_createtime();
+  inline void clear_has_createtime();
 
   // helper for ByteSize()
   int RequiredFieldsByteSizeFallback() const;
@@ -1046,6 +1080,7 @@ class Header : public ::google::protobuf::Message {
   bool commit_;
   bool fly_;
   ::google::protobuf::RepeatedPtrField< ::Entry > properties_;
+  ::google::protobuf::int64 createtime_;
   friend void  protobuf_AddDesc_kite_5fremoting_2eproto();
   friend void protobuf_AssignDesc_kite_5fremoting_2eproto();
   friend void protobuf_ShutdownFile_kite_5fremoting_2eproto();
@@ -1411,6 +1446,30 @@ inline void ConnMeta::set_allocated_secretkey(::std::string* secretkey) {
   }
   secretkey_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), secretkey);
   // @@protoc_insertion_point(field_set_allocated:ConnMeta.secretKey)
+}
+
+// optional int32 warmingupSec = 3 [default = 0];
+inline bool ConnMeta::has_warmingupsec() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void ConnMeta::set_has_warmingupsec() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void ConnMeta::clear_has_warmingupsec() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void ConnMeta::clear_warmingupsec() {
+  warmingupsec_ = 0;
+  clear_has_warmingupsec();
+}
+inline ::google::protobuf::int32 ConnMeta::warmingupsec() const {
+  // @@protoc_insertion_point(field_get:ConnMeta.warmingupSec)
+  return warmingupsec_;
+}
+inline void ConnMeta::set_warmingupsec(::google::protobuf::int32 value) {
+  set_has_warmingupsec();
+  warmingupsec_ = value;
+  // @@protoc_insertion_point(field_set:ConnMeta.warmingupSec)
 }
 
 // -------------------------------------------------------------------
@@ -1866,6 +1925,59 @@ inline void DeliverAck::set_status(bool value) {
   set_has_status();
   status_ = value;
   // @@protoc_insertion_point(field_set:DeliverAck.status)
+}
+
+// optional string feedback = 6;
+inline bool DeliverAck::has_feedback() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void DeliverAck::set_has_feedback() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void DeliverAck::clear_has_feedback() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void DeliverAck::clear_feedback() {
+  feedback_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_feedback();
+}
+inline const ::std::string& DeliverAck::feedback() const {
+  // @@protoc_insertion_point(field_get:DeliverAck.feedback)
+  return feedback_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void DeliverAck::set_feedback(const ::std::string& value) {
+  set_has_feedback();
+  feedback_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:DeliverAck.feedback)
+}
+inline void DeliverAck::set_feedback(const char* value) {
+  set_has_feedback();
+  feedback_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:DeliverAck.feedback)
+}
+inline void DeliverAck::set_feedback(const char* value, size_t size) {
+  set_has_feedback();
+  feedback_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:DeliverAck.feedback)
+}
+inline ::std::string* DeliverAck::mutable_feedback() {
+  set_has_feedback();
+  // @@protoc_insertion_point(field_mutable:DeliverAck.feedback)
+  return feedback_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* DeliverAck::release_feedback() {
+  clear_has_feedback();
+  return feedback_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void DeliverAck::set_allocated_feedback(::std::string* feedback) {
+  if (feedback != NULL) {
+    set_has_feedback();
+  } else {
+    clear_has_feedback();
+  }
+  feedback_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), feedback);
+  // @@protoc_insertion_point(field_set_allocated:DeliverAck.feedback)
 }
 
 // -------------------------------------------------------------------
@@ -2442,6 +2554,30 @@ inline const ::google::protobuf::RepeatedPtrField< ::Entry >&
 Header::properties() const {
   // @@protoc_insertion_point(field_list:Header.properties)
   return properties_;
+}
+
+// optional int64 createTime = 10;
+inline bool Header::has_createtime() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void Header::set_has_createtime() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void Header::clear_has_createtime() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void Header::clear_createtime() {
+  createtime_ = GOOGLE_LONGLONG(0);
+  clear_has_createtime();
+}
+inline ::google::protobuf::int64 Header::createtime() const {
+  // @@protoc_insertion_point(field_get:Header.createTime)
+  return createtime_;
+}
+inline void Header::set_createtime(::google::protobuf::int64 value) {
+  set_has_createtime();
+  createtime_ = value;
+  // @@protoc_insertion_point(field_set:Header.createTime)
 }
 
 // -------------------------------------------------------------------

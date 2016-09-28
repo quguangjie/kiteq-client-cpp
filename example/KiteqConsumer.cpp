@@ -29,15 +29,17 @@ class testListenerAdapter : public ListenerAdapter
 {
 public:
 	bool onMessage(shared_ptr<Message> message) {
-		printf("testListenerAdapter::onMessage\n");
+		i ++;
+		printf("testListenerAdapter::onMessage index %d id %s\n", i, message->getHeader().messageid().c_str());
 		return true;
 	}
+	int  i = 0;
 };
 
 
 int main(int argc, char *argv[])
 {
-        string zkAddr = "localhost:2181";
+        string zkAddr = "172.16.1.96:2181";
         string groupId = "s-mts-test";
         string secretKey = "123456";
         string topic = "trade";

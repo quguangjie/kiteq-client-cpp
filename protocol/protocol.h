@@ -37,11 +37,15 @@ class  Protocol
 		static const char CMD_STRING_MESSAGE = 0x12;
 
 
-		static const int PACKET_HEAD_LEN = 4 + 1 + 4;
+		static const int  PACKET_HEAD_LEN = 4 + 1 + 2 + 8 + 4 ;
+		static const  int MAX_PACKET_BYTES = 32 * 1024;
 
 		static const int TX_UNKNOWN = 0;
 		static const int TX_COMMIT = 1;
 		static const int TX_ROLLBACK = 2;
+		static const long HEAD_EXTENSION = 0l;
+		static const short HEAD_VERSION = 2; // 基于长度
+
 		static char CMD_STR_CRLF[2];
 };
 

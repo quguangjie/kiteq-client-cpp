@@ -33,6 +33,7 @@ class KiteIOClient
 public:
 	virtual ~KiteIOClient() {}
     virtual void send(int cmdType, shared_ptr<protobuf::MessageLite> message) = 0;
+    virtual void sendAck(int o, int cmdType, shared_ptr<protobuf::MessageLite> message) = 0;
     virtual shared_ptr<HeartBeat> sendHeartBeatAndGet(int cmdType, shared_ptr<protobuf::MessageLite> message) = 0;
     virtual shared_ptr<ConnAuthAck> sendConnAndGet(int cmdType, shared_ptr<protobuf::MessageLite> message) = 0;
     virtual shared_ptr<MessageStoreAck> sendMessageAndGet(int cmdType, shared_ptr<protobuf::MessageLite> message) = 0;

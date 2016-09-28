@@ -27,13 +27,13 @@ using namespace boost;
 class remotingListener {
 public: 
 	virtual ~remotingListener() {}
-    virtual void txAckReceived(shared_ptr<TxACKPacket> txAck)
+    virtual void txAckReceived(int o, shared_ptr<TxACKPacket> txAck)
 	{
 	}
-    virtual void bytesMessageReceived(shared_ptr<BytesMessage> message)
+    virtual void bytesMessageReceived(int o, shared_ptr<BytesMessage> message)
 	{
 	}
-    virtual void stringMessageReceived(shared_ptr<StringMessage> message)
+    virtual void stringMessageReceived(int o, shared_ptr<StringMessage> message)
 	{
 	}
 };  

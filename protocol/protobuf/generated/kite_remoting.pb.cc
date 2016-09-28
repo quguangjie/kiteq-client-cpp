@@ -74,9 +74,10 @@ void protobuf_AssignDesc_kite_5fremoting_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HeartBeat, _internal_metadata_),
       -1);
   ConnMeta_descriptor_ = file->message_type(1);
-  static const int ConnMeta_offsets_[2] = {
+  static const int ConnMeta_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConnMeta, groupid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConnMeta, secretkey_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConnMeta, warmingupsec_),
   };
   ConnMeta_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -123,12 +124,13 @@ void protobuf_AssignDesc_kite_5fremoting_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageStoreAck, _internal_metadata_),
       -1);
   DeliverAck_descriptor_ = file->message_type(4);
-  static const int DeliverAck_offsets_[5] = {
+  static const int DeliverAck_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DeliverAck, messageid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DeliverAck, topic_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DeliverAck, messagetype_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DeliverAck, groupid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DeliverAck, status_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DeliverAck, feedback_),
   };
   DeliverAck_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -175,7 +177,7 @@ void protobuf_AssignDesc_kite_5fremoting_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Entry, _internal_metadata_),
       -1);
   Header_descriptor_ = file->message_type(7);
-  static const int Header_offsets_[9] = {
+  static const int Header_offsets_[10] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Header, messageid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Header, topic_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Header, messagetype_),
@@ -185,6 +187,7 @@ void protobuf_AssignDesc_kite_5fremoting_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Header, commit_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Header, fly_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Header, properties_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Header, createtime_),
   };
   Header_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -296,25 +299,26 @@ void protobuf_AddDesc_kite_5fremoting_2eproto() {
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\023kite_remoting.proto\"\034\n\tHeartBeat\022\017\n\007ve"
-    "rsion\030\001 \002(\003\".\n\010ConnMeta\022\017\n\007groupId\030\001 \002(\t"
-    "\022\021\n\tsecretKey\030\002 \002(\t\"5\n\013ConnAuthAck\022\024\n\006st"
-    "atus\030\001 \002(\010:\004true\022\020\n\010feedback\030\002 \002(\t\"L\n\017Me"
-    "ssageStoreAck\022\021\n\tmessageId\030\001 \002(\t\022\024\n\006stat"
-    "us\030\002 \002(\010:\004true\022\020\n\010feedback\030\003 \002(\t\"j\n\nDeli"
-    "verAck\022\021\n\tmessageId\030\001 \002(\t\022\r\n\005topic\030\002 \002(\t"
-    "\022\023\n\013messageType\030\003 \002(\t\022\017\n\007groupId\030\004 \002(\t\022\024"
-    "\n\006status\030\005 \002(\010:\004true\"K\n\013TxACKPacket\022\027\n\006h"
-    "eader\030\001 \002(\0132\007.Header\022\021\n\006status\030\002 \002(\005:\0010\022"
-    "\020\n\010feedback\030\003 \002(\t\"#\n\005Entry\022\013\n\003key\030\001 \002(\t\022"
-    "\r\n\005value\030\002 \002(\t\"\304\001\n\006Header\022\021\n\tmessageId\030\001"
-    " \002(\t\022\r\n\005topic\030\002 \002(\t\022\023\n\013messageType\030\003 \002(\t"
-    "\022\027\n\013expiredTime\030\004 \002(\003:\002-1\022\031\n\014deliverLimi"
-    "t\030\005 \002(\005:\003100\022\017\n\007groupId\030\006 \002(\t\022\016\n\006commit\030"
-    "\007 \002(\010\022\022\n\003fly\030\010 \002(\010:\005false\022\032\n\nproperties\030"
-    "\t \003(\0132\006.Entry\"5\n\014BytesMessage\022\027\n\006header\030"
-    "\001 \002(\0132\007.Header\022\014\n\004body\030\002 \002(\014\"6\n\rStringMe"
-    "ssage\022\027\n\006header\030\001 \002(\0132\007.Header\022\014\n\004body\030\002"
-    " \002(\t", 764);
+    "rsion\030\001 \002(\003\"G\n\010ConnMeta\022\017\n\007groupId\030\001 \002(\t"
+    "\022\021\n\tsecretKey\030\002 \002(\t\022\027\n\014warmingupSec\030\003 \001("
+    "\005:\0010\"5\n\013ConnAuthAck\022\024\n\006status\030\001 \002(\010:\004tru"
+    "e\022\020\n\010feedback\030\002 \002(\t\"L\n\017MessageStoreAck\022\021"
+    "\n\tmessageId\030\001 \002(\t\022\024\n\006status\030\002 \002(\010:\004true\022"
+    "\020\n\010feedback\030\003 \002(\t\"|\n\nDeliverAck\022\021\n\tmessa"
+    "geId\030\001 \002(\t\022\r\n\005topic\030\002 \002(\t\022\023\n\013messageType"
+    "\030\003 \002(\t\022\017\n\007groupId\030\004 \002(\t\022\024\n\006status\030\005 \002(\010:"
+    "\004true\022\020\n\010feedback\030\006 \001(\t\"K\n\013TxACKPacket\022\027"
+    "\n\006header\030\001 \002(\0132\007.Header\022\021\n\006status\030\002 \002(\005:"
+    "\0010\022\020\n\010feedback\030\003 \002(\t\"#\n\005Entry\022\013\n\003key\030\001 \002"
+    "(\t\022\r\n\005value\030\002 \002(\t\"\330\001\n\006Header\022\021\n\tmessageI"
+    "d\030\001 \002(\t\022\r\n\005topic\030\002 \002(\t\022\023\n\013messageType\030\003 "
+    "\002(\t\022\027\n\013expiredTime\030\004 \002(\003:\002-1\022\031\n\014deliverL"
+    "imit\030\005 \002(\005:\003100\022\017\n\007groupId\030\006 \002(\t\022\016\n\006comm"
+    "it\030\007 \002(\010\022\022\n\003fly\030\010 \002(\010:\005false\022\032\n\nproperti"
+    "es\030\t \003(\0132\006.Entry\022\022\n\ncreateTime\030\n \001(\003\"5\n\014"
+    "BytesMessage\022\027\n\006header\030\001 \002(\0132\007.Header\022\014\n"
+    "\004body\030\002 \002(\014\"6\n\rStringMessage\022\027\n\006header\030\001"
+    " \002(\0132\007.Header\022\014\n\004body\030\002 \002(\t", 827);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "kite_remoting.proto", &protobuf_RegisterTypes);
   HeartBeat::default_instance_ = new HeartBeat();
@@ -621,6 +625,7 @@ void HeartBeat::clear_version() {
 #ifndef _MSC_VER
 const int ConnMeta::kGroupIdFieldNumber;
 const int ConnMeta::kSecretKeyFieldNumber;
+const int ConnMeta::kWarmingupSecFieldNumber;
 #endif  // !_MSC_VER
 
 ConnMeta::ConnMeta()
@@ -645,6 +650,7 @@ void ConnMeta::SharedCtor() {
   _cached_size_ = 0;
   groupid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   secretkey_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  warmingupsec_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -686,13 +692,14 @@ ConnMeta* ConnMeta::New(::google::protobuf::Arena* arena) const {
 }
 
 void ConnMeta::Clear() {
-  if (_has_bits_[0 / 32] & 3u) {
+  if (_has_bits_[0 / 32] & 7u) {
     if (has_groupid()) {
       groupid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
     }
     if (has_secretkey()) {
       secretkey_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
     }
+    warmingupsec_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   if (_internal_metadata_.have_unknown_fields()) {
@@ -736,6 +743,21 @@ bool ConnMeta::MergePartialFromCodedStream(
             this->secretkey().data(), this->secretkey().length(),
             ::google::protobuf::internal::WireFormat::PARSE,
             "ConnMeta.secretKey");
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_warmingupSec;
+        break;
+      }
+
+      // optional int32 warmingupSec = 3 [default = 0];
+      case 3: {
+        if (tag == 24) {
+         parse_warmingupSec:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &warmingupsec_)));
+          set_has_warmingupsec();
         } else {
           goto handle_unusual;
         }
@@ -788,6 +810,11 @@ void ConnMeta::SerializeWithCachedSizes(
       2, this->secretkey(), output);
   }
 
+  // optional int32 warmingupSec = 3 [default = 0];
+  if (has_warmingupsec()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->warmingupsec(), output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -818,6 +845,11 @@ void ConnMeta::SerializeWithCachedSizes(
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         2, this->secretkey(), target);
+  }
+
+  // optional int32 warmingupSec = 3 [default = 0];
+  if (has_warmingupsec()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->warmingupsec(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -864,6 +896,13 @@ int ConnMeta::ByteSize() const {
   } else {
     total_size += RequiredFieldsByteSizeFallback();
   }
+  // optional int32 warmingupSec = 3 [default = 0];
+  if (has_warmingupsec()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->warmingupsec());
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -898,6 +937,9 @@ void ConnMeta::MergeFrom(const ConnMeta& from) {
       set_has_secretkey();
       secretkey_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.secretkey_);
     }
+    if (from.has_warmingupsec()) {
+      set_warmingupsec(from.warmingupsec());
+    }
   }
   if (from._internal_metadata_.have_unknown_fields()) {
     mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -929,6 +971,7 @@ void ConnMeta::Swap(ConnMeta* other) {
 void ConnMeta::InternalSwap(ConnMeta* other) {
   groupid_.Swap(&other->groupid_);
   secretkey_.Swap(&other->secretkey_);
+  std::swap(warmingupsec_, other->warmingupsec_);
   std::swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -1049,6 +1092,30 @@ void ConnMeta::clear_secretkey() {
   }
   secretkey_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), secretkey);
   // @@protoc_insertion_point(field_set_allocated:ConnMeta.secretKey)
+}
+
+// optional int32 warmingupSec = 3 [default = 0];
+bool ConnMeta::has_warmingupsec() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+void ConnMeta::set_has_warmingupsec() {
+  _has_bits_[0] |= 0x00000004u;
+}
+void ConnMeta::clear_has_warmingupsec() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+void ConnMeta::clear_warmingupsec() {
+  warmingupsec_ = 0;
+  clear_has_warmingupsec();
+}
+ ::google::protobuf::int32 ConnMeta::warmingupsec() const {
+  // @@protoc_insertion_point(field_get:ConnMeta.warmingupSec)
+  return warmingupsec_;
+}
+ void ConnMeta::set_warmingupsec(::google::protobuf::int32 value) {
+  set_has_warmingupsec();
+  warmingupsec_ = value;
+  // @@protoc_insertion_point(field_set:ConnMeta.warmingupSec)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1949,6 +2016,7 @@ const int DeliverAck::kTopicFieldNumber;
 const int DeliverAck::kMessageTypeFieldNumber;
 const int DeliverAck::kGroupIdFieldNumber;
 const int DeliverAck::kStatusFieldNumber;
+const int DeliverAck::kFeedbackFieldNumber;
 #endif  // !_MSC_VER
 
 DeliverAck::DeliverAck()
@@ -1976,6 +2044,7 @@ void DeliverAck::SharedCtor() {
   messagetype_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   groupid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   status_ = true;
+  feedback_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1989,6 +2058,7 @@ void DeliverAck::SharedDtor() {
   topic_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   messagetype_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   groupid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  feedback_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
   }
 }
@@ -2019,7 +2089,7 @@ DeliverAck* DeliverAck::New(::google::protobuf::Arena* arena) const {
 }
 
 void DeliverAck::Clear() {
-  if (_has_bits_[0 / 32] & 31u) {
+  if (_has_bits_[0 / 32] & 63u) {
     if (has_messageid()) {
       messageid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
     }
@@ -2033,6 +2103,9 @@ void DeliverAck::Clear() {
       groupid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
     }
     status_ = true;
+    if (has_feedback()) {
+      feedback_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   if (_internal_metadata_.have_unknown_fields()) {
@@ -2128,6 +2201,23 @@ bool DeliverAck::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(50)) goto parse_feedback;
+        break;
+      }
+
+      // optional string feedback = 6;
+      case 6: {
+        if (tag == 50) {
+         parse_feedback:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_feedback()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+            this->feedback().data(), this->feedback().length(),
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "DeliverAck.feedback");
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -2202,6 +2292,16 @@ void DeliverAck::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->status(), output);
   }
 
+  // optional string feedback = 6;
+  if (has_feedback()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->feedback().data(), this->feedback().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "DeliverAck.feedback");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      6, this->feedback(), output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -2259,6 +2359,17 @@ void DeliverAck::SerializeWithCachedSizes(
   // required bool status = 5 [default = true];
   if (has_status()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->status(), target);
+  }
+
+  // optional string feedback = 6;
+  if (has_feedback()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->feedback().data(), this->feedback().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "DeliverAck.feedback");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        6, this->feedback(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -2337,6 +2448,13 @@ int DeliverAck::ByteSize() const {
   } else {
     total_size += RequiredFieldsByteSizeFallback();
   }
+  // optional string feedback = 6;
+  if (has_feedback()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->feedback());
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -2382,6 +2500,10 @@ void DeliverAck::MergeFrom(const DeliverAck& from) {
     if (from.has_status()) {
       set_status(from.status());
     }
+    if (from.has_feedback()) {
+      set_has_feedback();
+      feedback_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.feedback_);
+    }
   }
   if (from._internal_metadata_.have_unknown_fields()) {
     mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -2416,6 +2538,7 @@ void DeliverAck::InternalSwap(DeliverAck* other) {
   messagetype_.Swap(&other->messagetype_);
   groupid_.Swap(&other->groupid_);
   std::swap(status_, other->status_);
+  feedback_.Swap(&other->feedback_);
   std::swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -2666,6 +2789,59 @@ void DeliverAck::clear_status() {
   set_has_status();
   status_ = value;
   // @@protoc_insertion_point(field_set:DeliverAck.status)
+}
+
+// optional string feedback = 6;
+bool DeliverAck::has_feedback() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+void DeliverAck::set_has_feedback() {
+  _has_bits_[0] |= 0x00000020u;
+}
+void DeliverAck::clear_has_feedback() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+void DeliverAck::clear_feedback() {
+  feedback_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_feedback();
+}
+ const ::std::string& DeliverAck::feedback() const {
+  // @@protoc_insertion_point(field_get:DeliverAck.feedback)
+  return feedback_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void DeliverAck::set_feedback(const ::std::string& value) {
+  set_has_feedback();
+  feedback_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:DeliverAck.feedback)
+}
+ void DeliverAck::set_feedback(const char* value) {
+  set_has_feedback();
+  feedback_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:DeliverAck.feedback)
+}
+ void DeliverAck::set_feedback(const char* value, size_t size) {
+  set_has_feedback();
+  feedback_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:DeliverAck.feedback)
+}
+ ::std::string* DeliverAck::mutable_feedback() {
+  set_has_feedback();
+  // @@protoc_insertion_point(field_mutable:DeliverAck.feedback)
+  return feedback_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* DeliverAck::release_feedback() {
+  clear_has_feedback();
+  return feedback_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void DeliverAck::set_allocated_feedback(::std::string* feedback) {
+  if (feedback != NULL) {
+    set_has_feedback();
+  } else {
+    clear_has_feedback();
+  }
+  feedback_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), feedback);
+  // @@protoc_insertion_point(field_set_allocated:DeliverAck.feedback)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -3605,6 +3781,7 @@ const int Header::kGroupIdFieldNumber;
 const int Header::kCommitFieldNumber;
 const int Header::kFlyFieldNumber;
 const int Header::kPropertiesFieldNumber;
+const int Header::kCreateTimeFieldNumber;
 #endif  // !_MSC_VER
 
 Header::Header()
@@ -3635,6 +3812,7 @@ void Header::SharedCtor() {
   groupid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   commit_ = false;
   fly_ = false;
+  createtime_ = GOOGLE_LONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -3703,6 +3881,7 @@ void Header::Clear() {
       groupid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
     }
   }
+  createtime_ = GOOGLE_LONGLONG(0);
 
 #undef ZR_HELPER_
 #undef ZR_
@@ -3864,6 +4043,21 @@ bool Header::MergePartialFromCodedStream(
         }
         if (input->ExpectTag(74)) goto parse_loop_properties;
         input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectTag(80)) goto parse_createTime;
+        break;
+      }
+
+      // optional int64 createTime = 10;
+      case 10: {
+        if (tag == 80) {
+         parse_createTime:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &createtime_)));
+          set_has_createtime();
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -3959,6 +4153,11 @@ void Header::SerializeWithCachedSizes(
       9, this->properties(i), output);
   }
 
+  // optional int64 createTime = 10;
+  if (has_createtime()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(10, this->createtime(), output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -4038,6 +4237,11 @@ void Header::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         9, this->properties(i), target);
+  }
+
+  // optional int64 createTime = 10;
+  if (has_createtime()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(10, this->createtime(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -4148,6 +4352,13 @@ int Header::ByteSize() const {
   } else {
     total_size += RequiredFieldsByteSizeFallback();
   }
+  // optional int64 createTime = 10;
+  if (has_createtime()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->createtime());
+  }
+
   // repeated .Entry properties = 9;
   total_size += 1 * this->properties_size();
   for (int i = 0; i < this->properties_size(); i++) {
@@ -4212,6 +4423,11 @@ void Header::MergeFrom(const Header& from) {
       set_fly(from.fly());
     }
   }
+  if (from._has_bits_[9 / 32] & (0xffu << (9 % 32))) {
+    if (from.has_createtime()) {
+      set_createtime(from.createtime());
+    }
+  }
   if (from._internal_metadata_.have_unknown_fields()) {
     mutable_unknown_fields()->MergeFrom(from.unknown_fields());
   }
@@ -4250,6 +4466,7 @@ void Header::InternalSwap(Header* other) {
   std::swap(commit_, other->commit_);
   std::swap(fly_, other->fly_);
   properties_.UnsafeArenaSwap(&other->properties_);
+  std::swap(createtime_, other->createtime_);
   std::swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -4602,6 +4819,30 @@ const ::google::protobuf::RepeatedPtrField< ::Entry >&
 Header::properties() const {
   // @@protoc_insertion_point(field_list:Header.properties)
   return properties_;
+}
+
+// optional int64 createTime = 10;
+bool Header::has_createtime() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+void Header::set_has_createtime() {
+  _has_bits_[0] |= 0x00000200u;
+}
+void Header::clear_has_createtime() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+void Header::clear_createtime() {
+  createtime_ = GOOGLE_LONGLONG(0);
+  clear_has_createtime();
+}
+ ::google::protobuf::int64 Header::createtime() const {
+  // @@protoc_insertion_point(field_get:Header.createTime)
+  return createtime_;
+}
+ void Header::set_createtime(::google::protobuf::int64 value) {
+  set_has_createtime();
+  createtime_ = value;
+  // @@protoc_insertion_point(field_set:Header.createTime)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

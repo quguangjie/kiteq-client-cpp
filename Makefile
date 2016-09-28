@@ -1,12 +1,18 @@
 include Makefile.in
 
-OBJS = remoting/asioKiteIOClient.o remoting/ListenerManager.o client/ClientManager.o client/BindingManager.o client/DefaultKiteClient.o protocol/protobuf/generated/kite_remoting.pb.o  json/cJSON.o  protocol/protocol.o commons/ThreadPoolManager.o remoting/ResponseFuture.o protocol/KitePacket.o commons/KiteStats.o
+OBJS = remoting/asioKiteIOClient.o remoting/ListenerManager.o  remoting/ResponseFuture.o \
+       client/manager/ClientManager.o client/manager/BindingManager.o client/manager/DefaultKiteClient.o    \
+	   client/binding/Binding.o client/message/MessageUtils.o  \
+       protocol/protobuf/generated/kite_remoting.pb.o  protocol/protocol.o protocol/KitePacket.o protocol/KitePacketHeader.o \
+       commons/ThreadPoolManager.o commons/KiteStats.o    json/cJSON.o
+
 PRODUCEROBJS := example/KiteqProducer.o
 CONSUMEROBJS = example/KiteqConsumer.o
 TXPRODUCEROBJS = example/KiteqTxProducer.o
 CFLAGS  += -Wno-unknown-pragmas -finput-charset=UTF-8  -fexec-charset=UTF-8  -fwide-exec-charset=UTF-8 
-CFLAGS  += -I client/inc  -I commons/ -Ijson -I protocol/  -I remoting/inc/ -I /root/figserver/trunk/appzkclient -I/root/figserver/trunk/zookeeper-3.4.6/src/c/include/ -I /root/figserver/trunk/zookeeper-3.4.6/src/c/generated/ 
-LIBS += libkiteqclient.a /root/figserver/trunk/lib/libzkclient.a
+CFLAGS  += -I client/manager/  -I client/message/ -Iclient/util -Iclient/binding -I commons/ -Ijson -I protocol/  -I remoting/inc/ 
+CFLAGS  += -I /root/figserver/trunk/appzkclient -I/root/figserver/trunk/zookeeper-3.4.6/src/c/include/ -I /root/figserver/trunk/zookeeper-3.4.6/src/c/generated/ 
+LIBS += libkiteqclient.a ../zkclient-cpp//libzkclient.a
 LIBPATH += -lboost_thread-mt -lboost_filesystem-mt  -lboost_date_time -l zookeeper_mt -l protobuf -lpthread -lm
 
 

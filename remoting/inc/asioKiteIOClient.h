@@ -21,11 +21,13 @@
 
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
 #include <boost/tuple/tuple.hpp>
 #include  <boost/enable_shared_from_this.hpp>
 #include "protocol.h"
-#include "asioSession.hpp"
 #include "Counter.hpp"
+#include "KitePacket.h"
+#include "asioSession.hpp"
 #include "KiteIOClient.h"
 
 using namespace boost;
@@ -49,6 +51,7 @@ public:
 	asioKiteIOClient(const string &groupId, const string &secretKey, const string &serverUrl);
 
     void send(int cmdType,  shared_ptr<protobuf::MessageLite> message);
+    void sendAck(int o, int cmdType,  shared_ptr<protobuf::MessageLite> message);
 	shared_ptr<HeartBeat> sendHeartBeatAndGet(int cmdType, shared_ptr<protobuf::MessageLite> message);
 	shared_ptr<ConnAuthAck> sendConnAndGet(int cmdType, shared_ptr<protobuf::MessageLite> message);
 	shared_ptr<MessageStoreAck> sendMessageAndGet(int cmdType, shared_ptr<protobuf::MessageLite> message);
@@ -91,6 +94,8 @@ private:
 	KitePacket              readPkg;
     ConcurrentSet<string> acceptedTopics;
 };
+
+typedef boost::_bi::bind_t<void, boost::_mfi::mf2<void, asioKiteIOClient, const boost::system::error_code&, long unsigned int>, boost::_bi::list3<boost::_bi::value<asioKiteIOClient*>, boost::arg<1> (*)(), boost::arg<2> (*)()> > handleEnd;
 
 #endif 
 

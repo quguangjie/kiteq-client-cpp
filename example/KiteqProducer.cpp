@@ -39,16 +39,16 @@ static shared_ptr<StringMessage> buildMessage(const string &topic, const string 
 	uuids::random_generator  rgen;
 	uuids::uuid u = rgen();
 	Header * _header = new Header();
-	cout <<  replace_all_copy(to_string(u), "-", "") << endl; 
+	//cout <<  replace_all_copy(to_string(u), "-", "") << endl; 
 	_header->set_messageid(replace_all_copy(to_string(u), "-", ""));
 	//_header->set_messageid("0xc208a6f810");
 	_header->set_topic("trade");
 	_header->set_messagetype("pay-succ");
-	_header->set_expiredtime(1445173857);
+	_header->set_expiredtime(1845173857);
 	_header->set_deliverlimit(100);
 	_header->set_groupid("go-kite-test");
 	_header->set_commit(true);
-	_header->set_fly(true);
+	_header->set_fly(false);
 
 	shared_ptr<StringMessage> m(new StringMessage());
 	m->set_body("hello world");
@@ -58,7 +58,7 @@ static shared_ptr<StringMessage> buildMessage(const string &topic, const string 
 
 int main(int argc, char *argv[])
 {
-	string zkAddr = "127.0.0.1:2181";
+	string zkAddr = "172.16.1.96:2181";
 	string groupId = "s-mts-test";
 	string secretKey = "123456";
     string topic = "trade";
@@ -82,10 +82,11 @@ int main(int argc, char *argv[])
 		clients[i]->start();
 	}
 	sleep(3);
-	while(1)
+	for(int i = 0; i < 10000; ++i)
 	{
 		int uid = UID->getAndIncrement();
 		shared_ptr<StringMessage> message = buildMessage(topic, groupId, messageType, lexical_cast<string>(uid));
+	cout << message->header().messageid() <<"  index:" <<i <<  endl;
 		clients[0]->sendStringMessage(message);
 	}
 	while(1)sleep(1);

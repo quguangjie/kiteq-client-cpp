@@ -20,7 +20,7 @@
 #include "HostPort.hpp"
 #include "KiteStats.hpp"
 #include "KiteResponse.hpp"
-#include "ResponseFuture.hpp"
+#include "ResponseFuture.h"
 #include "protocol.h"
 #include "ListenerManager.h"
 
@@ -144,11 +144,11 @@ bool asioKiteIOClient::reconnect()
 	while(true)
 	{
 		reconnect0(++nretry);
-		//printf("asioKiteIOClient::reconnect status %ld\n", status.getCount());
+		printf("asioKiteIOClient::reconnect status %ld\n", status.getCount());
 		if (status.getCount() == RECOVERING) {
 			heartbeat->reset();
 			if (handshake()) {
-				//printf("asioKiteIOClient::reconnect  set running");
+				printf("asioKiteIOClient::reconnect  set running");
 				status.setCount(RUNNING);
 				return true; 
 			}
@@ -181,7 +181,12 @@ void asioKiteIOClient::close()
 void asioKiteIOClient::send(int cmdType,  shared_ptr<protobuf::MessageLite> message)
 {
 	KitePacket reqPacket(cmdType, message);
-	session_.async_write(reqPacket, boost::bind(&asioKiteIOClient::handle_write_request, this,boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));   
+	session_.async_write<handleEnd>(reqPacket, boost::bind(&asioKiteIOClient::handle_write_request, this,boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));   
+}
+void asioKiteIOClient::sendAck(int o, int cmdType,  shared_ptr<protobuf::MessageLite> message)
+{
+	KitePacket reqPacket(o, cmdType, message);
+	session_.async_write<handleEnd>(reqPacket, boost::bind(&asioKiteIOClient::handle_write_request, this,boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));   
 }
 shared_ptr<HeartBeat>       asioKiteIOClient::sendHeartBeatAndGet(int cmdType, shared_ptr<protobuf::MessageLite> message)
 {
@@ -189,7 +194,7 @@ shared_ptr<HeartBeat>       asioKiteIOClient::sendHeartBeatAndGet(int cmdType, s
 	shared_ptr<ResponseFuture> future(new ResponseFuture(reqPacket.getOpaque()));
 	future->ResponseFutureUsed();
 
-	session_.async_write(reqPacket, boost::bind(&asioKiteIOClient::handle_write_request, this,boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));   
+	session_.async_write<handleEnd>(reqPacket, boost::bind(&asioKiteIOClient::handle_write_request, this,boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));   
 	try {
 		shared_ptr<KiteResponse> resp = future->getResponse(1000);  //1000ms
 		if (resp == NULL) {
@@ -214,7 +219,7 @@ shared_ptr<ConnAuthAck>     asioKiteIOClient::sendConnAndGet(int cmdType, shared
 	shared_ptr<ResponseFuture> future(new ResponseFuture(reqPacket.getOpaque()));
 	future->ResponseFutureUsed();
 
-	session_.async_write(reqPacket, boost::bind(&asioKiteIOClient::handle_write_request, this,boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));   
+	session_.async_write<handleEnd>(reqPacket, boost::bind(&asioKiteIOClient::handle_write_request, this,boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));   
 	try {
 		shared_ptr<KiteResponse> resp = future->getResponse(3000);  //1000ms
 		if (resp == NULL) {
@@ -239,7 +244,7 @@ shared_ptr<MessageStoreAck> asioKiteIOClient::sendMessageAndGet(int cmdType, sha
 	future->ResponseFutureUsed();
 	//printf("asioKiteIOClient::sendMessageAndGet %d\n");
 
-	session_.async_write(reqPacket, boost::bind(&asioKiteIOClient::handle_write_request, this,boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));   
+	session_.async_write<handleEnd>(reqPacket, boost::bind(&asioKiteIOClient::handle_write_request, this,boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));   
 
 	try {
 		shared_ptr<KiteResponse> resp = future->getResponse(1000);  //1000ms
@@ -285,9 +290,8 @@ bool asioKiteIOClient::handshake()
 	shared_ptr<ConnAuthAck> ack = sendConnAndGet(Protocol::CMD_CONN_META, connMeta);
 	if(ack == NULL)
 		return false;
-	//printf("asioKiteIOClient::handshake [%s.%d]\n", __FUNCTION__,__LINE__);
 	bool success = ack->status();
-	//printf("asioKiteIOClient::handshake [%s.%d] success %d\n", __FUNCTION__,__LINE__, success);
+	printf("asioKiteIOClient::handshake [%s.%d] success %d\n", __FUNCTION__,__LINE__, success);
 	if (success) 
 		status.setCount(RUNNING);
 	return success;
@@ -295,7 +299,7 @@ bool asioKiteIOClient::handshake()
 
 void     asioKiteIOClient::handle_resolve(const boost::system::error_code& err, tcp::resolver::iterator endpoint_iterator)
 {
-	//printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, (err));
+	printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, (err));
 	if(!err)
 	{
 #if BOOST_VERSION < 104801
@@ -314,27 +318,27 @@ void     asioKiteIOClient::handle_connect(const boost::system::error_code& err, 
 void     asioKiteIOClient::handle_connect(const boost::system::error_code& err)
 #endif
 {
-	//printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, (err));
+//	printf("[%s.%d] %d %s\n", __FUNCTION__,__LINE__, err.value(), err.category().name());
 	if (!err) {
 		status.setCount(RECOVERING);
-		session_.async_read(readPkg, boost::bind(&asioKiteIOClient::handle_read_pkg, this, boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));
+		session_.async_read<handleEnd>(readPkg, boost::bind(&asioKiteIOClient::handle_read_pkg, this, boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));
 	}
 }
 void     asioKiteIOClient::handle_write_request(const boost::system::error_code& err, size_t written)
 {
-	//printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, (err));
+//	printf("[%s.%d] %d %s written %d\n", __FUNCTION__,__LINE__, err.value(), err.category().name(), written);
 	if (!err) {
 		KiteStats::recordWrite();
 	}
 }
 void     asioKiteIOClient::handle_read_pkg(const boost::system::error_code& err,std::size_t size)
 {
-	//printf("[%s.%d] %d\n", __FUNCTION__,__LINE__, err);
+//	printf("[%s.%d] %d %s size %d\n", __FUNCTION__,__LINE__, err.value(), err.category().name(), size);
 	if (!err) {
 		KiteStats::recordRead();
 
 		char cmdType = readPkg.getCmdType();
-	//printf("[%s.%d] cmdType %d\n", __FUNCTION__,__LINE__, cmdType);
+	//	printf("[%s.%d] cmdType %d\n", __FUNCTION__,__LINE__, cmdType);
 		if (cmdType == Protocol::CMD_CONN_AUTH ||
 				cmdType == Protocol::CMD_MESSAGE_STORE_ACK ||
 				cmdType == Protocol::CMD_HEARTBEAT) 
@@ -344,21 +348,18 @@ void     asioKiteIOClient::handle_read_pkg(const boost::system::error_code& err,
 		} 
 		else 
 		{
-		//	string addr = socket_.remote_endpoint().address().to_string();
 			string addr = hostPort->toString();
 			shared_ptr<remotingListener> listener = ListenerManager::getListener(addr);
 			if (cmdType == Protocol::CMD_TX_ACK) {
-				listener->txAckReceived(static_pointer_cast<TxACKPacket>(readPkg.getMessage()));
+				listener->txAckReceived(readPkg.getOpaque(), static_pointer_cast<TxACKPacket>(readPkg.getMessage()));
 			} else if (cmdType == Protocol::CMD_BYTES_MESSAGE) {
-				listener->bytesMessageReceived(static_pointer_cast<BytesMessage>(readPkg.getMessage()));
+				listener->bytesMessageReceived(readPkg.getOpaque(), static_pointer_cast<BytesMessage>(readPkg.getMessage()));
 			} else if (cmdType == Protocol::CMD_STRING_MESSAGE) {
-				listener->stringMessageReceived(static_pointer_cast<StringMessage>(readPkg.getMessage()));
+				listener->stringMessageReceived(readPkg.getOpaque(), static_pointer_cast<StringMessage>(readPkg.getMessage()));
 			} else {
 			}
 		}
-	//printf("[%s.%d] \n", __FUNCTION__,__LINE__);
-		session_.async_read(readPkg, boost::bind(&asioKiteIOClient::handle_read_pkg, this, boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));
-	//printf("[%s.%d] \n", __FUNCTION__,__LINE__);
+		session_.async_read<handleEnd>(readPkg, boost::bind(&asioKiteIOClient::handle_read_pkg, this, boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));
 
 	}
 }

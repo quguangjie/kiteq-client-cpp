@@ -41,5 +41,3 @@ map<string, shared_ptr<remotingListener> > ListenerManager::listeners;
 mutex ListenerManager::maplock;
 
 
-
-
